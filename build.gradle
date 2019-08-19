@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+group = 'uk.me.eddies'
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	compile 'org.slf4j:slf4j-api:1.7.21'
+	runtime 'org.slf4j:slf4j-simple:1.7.21'
+	testCompile 'junit:junit:4.12'
+	testCompile 'org.hamcrest:hamcrest-all:1.3'
+}
+
+sourceSets {
+	integTest {
+		java {
+			compileClasspath += main.output
+			runtimeClasspath += main.output
+		}
+	}
+}
+
+configurations {
+	integTestCompile.extendsFrom testCompile
+	integTestRuntime.extendsFrom testRuntime
+}
+
+task integTest(type:Test) {
+	group = 'verification'
+	testClassesDirs = project.sourceSets.integTest.output.classesDirs
+	classpath = project.sourceSets.integTest.runtimeClasspath
+	check.dependsOn it
+	dependsOn jar
+}
+
